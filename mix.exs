@@ -7,7 +7,6 @@ defmodule ECS.Mixfile do
      elixir: "~> 1.2",
      description: description,
      deps: deps,
-     docs: [output: "../ex_ecs/docs"],
      package: package]
   end
 
@@ -27,9 +26,9 @@ defmodule ECS.Mixfile do
   end
 
   defp package do
-    [files: ["lib", "mix.exs", "priv", "README.md", "LICENSE"],
+    [files: ["lib", "mix.exs", "README.md", "LICENSE"],
      maintainers: ["Josh Forisha"],
-     licences: ["MIT"],
+     licenses: ["MIT"],
      links: %{
        "GitHub" => "https://github.com/joshforisha/ex_ecs",
        "Docs" => "http://joshforisha.com/ex_ecs/docs"
