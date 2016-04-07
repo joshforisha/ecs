@@ -7,6 +7,7 @@ defmodule ECS.Mixfile do
      elixir: "~> 1.2",
      description: description,
      deps: deps,
+     docs: [output: "../ex_ecs/docs"],
      package: package]
   end
 
