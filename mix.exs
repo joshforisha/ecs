@@ -30,8 +30,7 @@ defmodule ECS.Mixfile do
      maintainers: ["Josh Forisha"],
      licenses: ["MIT"],
      links: %{
-       "GitHub" => "https://github.com/joshforisha/ex_ecs",
-       "Docs" => "http://joshforisha.com/ex_ecs/docs"
+       "GitHub" => "https://github.com/joshforisha/ecs"
      }]
   end
 end
