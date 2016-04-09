@@ -1,10 +1,28 @@
 defmodule ECS.Routine do
   @moduledoc """
-  Routines iterate over entities with certain components and update them.
+  Functions to setup and control routines.
+
+  A routine iterates over entities with certain components, and `perform`s an
+  action with them.
+
+  ## Examples
+
+      # Define a routine to display entities' names.
+      defmodule Routine.DisplayNames do
+        # Accepts entities with a name component.
+        def accepts?(entity) do
+          ECS.Entity.has?(:name)
+        end
+
+        # Displays the entity's name
+        def perform(entity) do
+          IO.puts ECS.Entity.get(entity, :name)
+        end
+      end
   """
 
-  @callback accepts?(Entity) :: Bool
-  @callback run(Entity) :: Entity
+  @callback accepts?(pid) :: Bool
+  @callback perform(pid) :: any
 
   @doc "Run `routines` over `entities`."
   def run(entities, []), do: entities

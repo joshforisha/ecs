@@ -1,8 +1,19 @@
 defmodule ECS.Entity do
   @moduledoc """
-  Methods for working with entities.
+  Functions to work with entities.
 
-  Entities are agent-based containers for components.
+  An entity is an agent-based container for a map of components.
+
+  ## Examples
+
+      # Create a monster entity.
+      monster = ECS.Entity.new([
+        Component.Health.new(100),
+        Component.Name.new('monster')
+      ])
+
+      # Attach an attack component to the monster.
+      ECS.Entity.attach(monster, Component.Attack.new(:melee, 24))
   """
 
   @doc "Attaches a `component` to an `entity`."
