@@ -11,7 +11,7 @@ defmodule ECS.Routine do
       defmodule Routine.DisplayNames do
         # Accepts entities with a name component.
         def accepts?(entity) do
-          ECS.Entity.has?(:name)
+          ECS.Entity.has?(entity, :name)
         end
 
         # Displays the entity's name
