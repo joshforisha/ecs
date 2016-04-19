@@ -1,14 +1,14 @@
-defmodule ECS.Routine do
+defmodule ECS.Service do
   @moduledoc """
-  Functions to setup and control routines.
+  Functions to setup and control services.
 
-  A routine iterates over entities with certain components, and `perform`s an
+  A service iterates over entities with certain components, and `perform`s an
   action with them.
 
   ## Examples
 
-      # Define a routine to display entities' names.
-      defmodule Routine.DisplayNames do
+      # Define a service to display entities' names.
+      defmodule Service.DisplayNames do
         # Accepts entities with a name component.
         def accepts?(entity) do
           ECS.Entity.has?(entity, :name)
@@ -24,16 +24,16 @@ defmodule ECS.Routine do
   @callback accepts?(pid) :: Bool
   @callback perform(pid) :: any
 
-  @doc "Run `routines` over `entities`."
+  @doc "Run `service` over `entities`."
   def run(entities, []), do: entities
-  def run(entities, [routine|rs]) do
+  def run(entities, [service|services]) do
     entities
-    |> Enum.map(&iterate(&1, routine))
-    |> run(rs)
+    |> Enum.map(&iterate(&1, service))
+    |> run(services)
   end
 
-  defp iterate(entity, routine) do
-    if routine.accepts?(entity), do: routine.run(entity)
+  defp iterate(entity, service) do
+    if service.accepts?(entity), do: service.run(entity)
     entity
   end
 end
