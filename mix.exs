@@ -3,7 +3,7 @@ defmodule ECS.Mixfile do
 
   def project do
     [app: :ecs,
-     version: "0.0.2",
+     version: "0.0.3",
      elixir: "~> 1.2",
      description: description,
      deps: deps,
@@ -15,9 +15,7 @@ defmodule ECS.Mixfile do
   end
 
   defp description do
-    """
-    An experimental Entity-Component System (ECS) game engine.
-    """
+    "An experimental Entity-Component System (ECS) game engine."
   end
 
   defp deps do
