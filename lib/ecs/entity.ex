@@ -52,7 +52,7 @@ defmodule ECS.Entity do
 
   @doc "Sets `entity` component of `cmp_type` to `value`."
   def set(entity, cmp_type, value) do
-    Agent.update(entity, &Map.update!(&1, cmp_type, fn -> value end))
+    Agent.update(entity, &Map.update!(&1, cmp_type, fn(_) -> value end))
     entity
   end
 
