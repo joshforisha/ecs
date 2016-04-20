@@ -18,7 +18,7 @@ defmodule ECS.Entity do
 
   @doc "Attaches a `component` to an `entity`."
   def attach(entity, component) do
-    cmp_type = Component.type_of(component)
+    cmp_type = ECS.Component.type_of(component)
     Agent.update(entity, &Map.put_new(&1, cmp_type, component))
     entity
   end
@@ -44,7 +44,7 @@ defmodule ECS.Entity do
   def new(components) do
     {:ok, entity} = Agent.start(fn ->
       components
-      |> Enum.map(&({Component.type_of(&1), &1}))
+      |> Enum.map(&({ECS.Component.type_of(&1), &1}))
       |> Enum.into(%{})
     end)
     entity
