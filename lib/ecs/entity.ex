@@ -64,11 +64,11 @@ defmodule ECS.Entity do
     update(entity, cmp_type, fn(_) -> value end)
   end
 
-  @doc "Updates `entity` using `update_fun`."
-  def update(entity, cmp_type, update_fun) do
+  @doc "Updates `entity`'s component value of `cmp_type` using `update_fn`."
+  def update(entity, cmp_type, update_fn) do
     :ok = Agent.update(entity, fn(cmps) ->
       Map.update!(cmps, cmp_type, fn(cmp) ->
-        ECS.Component.update(cmp, update_fun)
+        ECS.Component.update(cmp, update_fn)
       end)
     end)
   end
