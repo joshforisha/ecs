@@ -3,8 +3,8 @@ defmodule ECS.Service do
   Functions to setup and control services.
 
   A service iterates over entities with certain components, defined in
-  `requires/0`, and calls `perform/1` on each entity. `perform/1` should return
-  the entity_pid when the entity should continue to exist in the
+  `component_types/0`, and calls `perform/1` on each entity. `perform/1` should
+  return the entity_pid when the entity should continue to exist in the
   shared collection.
 
   ## Examples
