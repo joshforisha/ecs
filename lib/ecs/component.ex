@@ -1,19 +1,33 @@
 defprotocol ECS.Component do
   @moduledoc """
-  A protocol to allow specific component type checking.
+  A protocol to allow custom specific component definitions.
 
-  This protocol is intended to be used for a module with a struct representative
-  of a component data structure, with the core `value` key as the "raw" data. A
-  `type` key atom value is also expected for consistent component typing.
+  This protocol is intended to be used with a module with a struct
+  representative of a component data structure, with the core `value` key as the
+  "raw" data. A `type` key atom value is also expected for consistent
+  component typing.
 
   ## Examples
 
       # Define a custom "name" component.
-      defmodule Component.Name do
+      defmodule Name do
         defstruct type: :name, value: nil
 
-        def new(name), do: %Component.Name{value: name}
+        def new(name), do: %Name{value: name}
       end
+
+      # Create a name component.
+      name = Name.new("Josh")
+
+      # Display the name.
+      IO.puts ECS.Component.value_of(name) # "Josh"
+
+      # Verify the type.
+      :name = ECS.Component.type_of(name) # :name
+
+      # Update the value.
+      updated_name = ECS.Component.update(name, "Boba")
+      IO.puts ECS.Component.value_of(updated_name) # "Boba"
   """
 
   @fallback_to_any true
