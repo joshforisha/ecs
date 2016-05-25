@@ -12,3 +12,35 @@ Add ecs to your list of dependencies in `mix.exs`:
     def deps do
       [{:ecs, "~> 0.2.0"}]
     end
+
+## Example
+
+```elixir
+defmodule Component.Name do
+  defstruct value: nil
+  
+  def new(name), do: %__MODULE__{value: name}
+end
+
+defmodule Entity.Player do
+  def new(name) do
+    ECS.Entity.new([
+      Component.Name.new(name)
+    ])
+  end
+end
+
+defmodule Service.DisplayName do
+  @behaviour ECS.Service
+  
+  def component_types, do: [:name]
+  
+  def perform(entity) do
+    IO.puts ECS.Entity.get(entity, :name)
+    entity
+  end
+end
+
+player = Entity.Player.new("Josh")
+ECS.Service.run([Service.DisplayName], [player])
+```
