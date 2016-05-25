@@ -40,7 +40,7 @@ defprotocol ECS.Component do
 
       Component.Name.new("Josh")
       |> ECS.Component.type_of
-      #=> :name_component
+      #=> :name
   """
   def type_of(component)
 
