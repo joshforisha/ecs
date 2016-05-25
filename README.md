@@ -7,5 +7,5 @@ Elixir Entity-Component System game engine
 Add ecs to your list of dependencies in `mix.exs`:
 
     def deps do
-      [{:ecs, "~> 0.1.0"}]
+      [{:ecs, "~> 0.2.0"}]
     end
