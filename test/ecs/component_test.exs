@@ -1,30 +1,29 @@
 defmodule ECS.ComponentTest do
   use ExUnit.Case, async: true
 
-  test "type_of/1: type can be obtained" do
-    assert ECS.Component.type_of(%{type: :ok}) == :ok
+  test "set/2 sets the value as expected" do
+    %{value: new_value} = ECS.Component.set(%{value: :initial}, :test)
+    assert new_value == :test
   end
 
-  test "type_of/1: type lookup fails without `type` key" do
-    assert_raise(FunctionClauseError, fn -> ECS.Component.type_of(%{}) end)
+  test "type_of/1 properly figures type" do
+    assert ECS.Component.type_of(Component.Test.new(nil)) == :test
   end
 
-  test "update/2: value is updated as expected" do
+  test "update/2 updates value as expected" do
     cmp = %{value: :initial}
-    assert ECS.Component.value_of(cmp) == :initial
-
-    updated_cmp = ECS.Component.update(cmp, fn(c) ->
+    %{value: new_value} = ECS.Component.update(cmp, fn(c) ->
       assert c == :initial
       :updated
     end)
-    assert ECS.Component.value_of(updated_cmp) == :updated
+    assert new_value == :updated
   end
 
-  test "value_of/1: value can be obtained" do
+  test "value_of/1 retrieves the value as expected" do
     assert ECS.Component.value_of(%{value: :ok}) == :ok
   end
 
-  test "value_of/1: value lookup fails without `value` key" do
+  test "value_of/1 fails without `value` key" do
     assert_raise(FunctionClauseError, fn -> ECS.Component.value_of(%{}) end)
   end
 end

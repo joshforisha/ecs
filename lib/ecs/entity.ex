@@ -44,7 +44,7 @@ defmodule ECS.Entity do
     |> Map.has_key?(cmp_type)
   end
 
-  @doc "Checks whether `entity` has component types `cmp_types`."
+  @doc "Checks whether `entity` has all component types of `cmp_types`."
   def has_all?(entity, cmp_types) do
     List.foldl(cmp_types, true, &(&2 && has?(entity, &1)))
   end

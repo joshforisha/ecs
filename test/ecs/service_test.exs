@@ -4,25 +4,15 @@ defmodule ECS.ServiceTest do
   test "`run/2` checks services' required types and calls `perform/1`" do
     defmodule CheckColor do
       @behaviour ECS.Service
-      def component_types, do: [:color]
+      def component_types, do: [:test]
       def perform(entity) do
-        assert ECS.Entity.get(entity, :color) == "blue"
+        assert ECS.Entity.get(entity, :test) == :blue
         entity
       end
     end
 
-    defmodule CheckName do
-      @behaviour ECS.Service
-      def component_types, do: [:name]
-      def perform(entity) do
-        assert ECS.Entity.get(entity, :name) == "Bob"
-        entity
-      end
-    end
-
-    ECS.Service.run([CheckColor, CheckName], [
-      ECS.Entity.new([%{type: :color, value: "blue"}]),
-      ECS.Entity.new([%{type: :name, value: "Bob"}])
+    ECS.Service.run([CheckColor], [
+      ECS.Entity.new([Component.Test.new(:blue)])
     ])
   end
 end
