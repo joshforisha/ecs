@@ -10,7 +10,7 @@ Elixir Entity-Component System game engine
 Add ecs to your list of dependencies in `mix.exs`:
 
     def deps do
-      [{:ecs, "~> 0.2.0"}]
+      [{:ecs, "~> 0.2.1"}]
     end
 
 ## Example
@@ -19,7 +19,7 @@ Add ecs to your list of dependencies in `mix.exs`:
 # Define a simple component for containing a "name" value.
 defmodule Component.Name do
   defstruct value: nil
-  
+
   def new(name), do: %__MODULE__{value: name}
 end
 
@@ -35,9 +35,9 @@ end
 # Define a service that prints out names of entities that have name components.
 defmodule Service.DisplayName do
   @behaviour ECS.Service
-  
+
   def component_types, do: [:name]
-  
+
   def perform(entity) do
     IO.puts ECS.Entity.get(entity, :name)
     entity
