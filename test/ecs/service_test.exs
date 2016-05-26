@@ -1,7 +1,7 @@
 defmodule ECS.ServiceTest do
   use ExUnit.Case, async: true
 
-  test "`run/2` checks services' required types and calls `perform/1`" do
+  test "run/2 checks services' required types and calls `perform/1`" do
     defmodule CheckColor do
       @behaviour ECS.Service
       def component_types, do: [:test]

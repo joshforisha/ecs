@@ -32,14 +32,14 @@ defmodule ECS.EntityTest do
     refute ECS.Entity.has?(entity, :test)
   end
 
-  test "has_all?/2 returns `true` when components are attached" do
+  test "has?/2 returns `true` when multiple components are attached" do
     entity = ECS.Entity.new([Component.Test.new(:ok)])
-    assert ECS.Entity.has_all?(entity, [:test])
+    assert ECS.Entity.has?(entity, [:test])
   end
 
-  test "has_all?/2 returns `false` when any components are not attached" do
+  test "has?/2 returns `false` when any listed components are not attached" do
     entity = ECS.Entity.new([Component.Test.new(:test_one)])
-    refute ECS.Entity.has_all?(entity, [:test_one, :test_two])
+    refute ECS.Entity.has?(entity, [:test_one, :test_two])
   end
 
   test "new/1 returns an agent pid" do

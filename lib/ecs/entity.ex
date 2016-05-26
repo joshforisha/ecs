@@ -34,19 +34,21 @@ defmodule ECS.Entity do
 
   @doc "Retrieves a component's value of type `cmp_type` from an `entity`."
   def get(entity, cmp_type) do
-    Agent.get(entity, &Map.get(&1, cmp_type))
+    entity
+    |> Agent.get(&Map.get(&1, cmp_type))
     |> ECS.Component.value_of
   end
 
-  @doc "Checks whether an `entity` has a component of `cmp_type`."
-  def has?(entity, cmp_type) do
-    Agent.get(entity, &(&1))
-    |> Map.has_key?(cmp_type)
+  @doc "Checks whether an `entity` has component(s) of `cmp_type`."
+  def has?(entity, cmp_types) when is_list(cmp_types) do
+    cmp_types
+    |> List.foldl(true, &(&2 && has?(entity, &1)))
   end
 
-  @doc "Checks whether `entity` has all component types of `cmp_types`."
-  def has_all?(entity, cmp_types) do
-    List.foldl(cmp_types, true, &(&2 && has?(entity, &1)))
+  def has?(entity, cmp_type) do
+    entity
+    |> Agent.get(&(&1))
+    |> Map.has_key?(cmp_type)
   end
 
   @doc "Returns a new agent pid wrapping `components` as a map."

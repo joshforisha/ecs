@@ -41,7 +41,7 @@ defmodule ECS.Service do
 
   defp iterate(service, entity) do
     cmp_types = service.component_types
-    if ECS.Entity.has_all?(entity, cmp_types) do
+    if ECS.Entity.has?(entity, cmp_types) do
       service.perform(entity)
     else
       entity

@@ -80,7 +80,8 @@ defimpl ECS.Component, for: Any do
     |> Enum.map(&String.downcase(&1))
     |> Enum.join("_")
 
-    Regex.replace(~r/_component\S*$/, full_name, "")
+    ~r/_component\S*$/
+    |> Regex.replace(full_name, "")
     |> String.to_atom
   end
 
