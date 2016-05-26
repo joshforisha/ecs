@@ -1,3 +1,9 @@
 language: elixir
 elixir:
   - 1.2.5
+notifications:
+  email:
+    on_failure: always
+    on_success: never
+    recipients:
+      - josh@forisha.com
