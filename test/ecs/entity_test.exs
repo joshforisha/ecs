@@ -49,7 +49,8 @@ defmodule ECS.EntityTest do
   end
 
   test "new/1 creates entity with expected components" do
-    ECS.Entity.new([Test.new(:ok)])
+    [Test.new(:ok)]
+    |> ECS.Entity.new
     |> Agent.get(&assert(Map.has_key?(&1, Test)))
   end
 
