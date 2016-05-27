@@ -1,5 +1,8 @@
 ExUnit.start()
 
+defmodule Component.Empty do
+end
+
 defmodule Component.Test do
   defstruct value: nil
 

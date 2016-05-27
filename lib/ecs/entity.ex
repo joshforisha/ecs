@@ -2,33 +2,39 @@ defmodule ECS.Entity do
   @moduledoc """
   Functions to work with entities.
 
-  An entity is an agent-based container for a map of components.
+  An entity is an agent-based container for a map of components. Components are
+  placed in the map with their key as their struct reference atom.
 
   ## Examples
 
       # Create a monster entity.
       monster = ECS.Entity.new([
         Component.Health.new(100),
-        Component.Name.new("monster")
+        Component.Name.new("Monty")
       ])
 
       # Output its name.
-      IO.puts ECS.Entity.get(monster, :name) # "monster"
+      monster
+      |> ECS.Entity.get(Component.Name)
+      |> IO.puts
+      #=> "Monty"
 
       # Attach an attack component to the monster.
-      ECS.Entity.attach(monster, Component.Attack.new(:melee, 24))
+      monster
+      |> ECS.Entity.attach(Component.Attack.new(:melee, 24))
   """
 
   @doc "Attaches a `component` to an `entity`."
   def attach(entity, component) do
-    cmp_type = ECS.Component.type_of(component)
-    :ok = Agent.update(entity, &Map.put_new(&1, cmp_type, component))
+    entity
+    |> Agent.update(&Map.put_new(&1, component.__struct__, component))
     entity
   end
 
   @doc "Detaches a component of type `cmp_type` from an `entity`."
   def detach(entity, cmp_type) do
-    :ok = Agent.update(entity, &Map.delete(&1, cmp_type))
+    entity
+    |> Agent.update(&Map.delete(&1, cmp_type))
     entity
   end
 
@@ -36,7 +42,6 @@ defmodule ECS.Entity do
   def get(entity, cmp_type) do
     entity
     |> Agent.get(&Map.get(&1, cmp_type))
-    |> ECS.Component.value_of
   end
 
   @doc "Checks whether an `entity` has component(s) of `cmp_type`."
@@ -55,7 +60,7 @@ defmodule ECS.Entity do
   def new(components) do
     {:ok, entity} = Agent.start(fn ->
       components
-      |> Enum.map(&({ECS.Component.type_of(&1), &1}))
+      |> Enum.map(&({&1.__struct__, &1}))
       |> Enum.into(%{})
     end)
     entity
@@ -68,10 +73,7 @@ defmodule ECS.Entity do
 
   @doc "Updates `entity`'s component value of `cmp_type` using `update_fn`."
   def update(entity, cmp_type, update_fn) do
-    :ok = Agent.update(entity, fn(cmps) ->
-      Map.update!(cmps, cmp_type, fn(cmp) ->
-        ECS.Component.update(cmp, update_fn)
-      end)
-    end)
+    entity
+    |> Agent.update(&Map.update!(&1, cmp_type, update_fn))
   end
 end

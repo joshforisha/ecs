@@ -3,7 +3,7 @@ defmodule ECS.Mixfile do
 
   def project do
     [app: :ecs,
-     version: "0.2.1",
+     version: "0.3.0",
      elixir: "~> 1.2",
      description: description,
      deps: deps,
