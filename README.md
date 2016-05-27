@@ -40,7 +40,9 @@ defmodule System.DisplayName do
   def component_types, do: [Name]
 
   def perform(entity) do
-    ECS.Entity.get(entity, Name).value
+    entity
+    |> ECS.Entity.get(Name)
+    |> Map.get(:value)
     |> IO.puts
 
     entity
