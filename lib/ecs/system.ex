@@ -34,7 +34,7 @@ defmodule ECS.System do
 
   @doc "Run `systems` over `entities`."
   def run([], entities), do: entities
-  def run([system|systems], entities) do
+  def run([system | systems], entities) do
     systems
     |> run(Enum.map(entities, &iterate(system, &1)))
   end

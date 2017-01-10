@@ -3,25 +3,28 @@ defmodule ECS.Mixfile do
 
   def project do
     [app: :ecs,
-     version: "0.3.0",
-     elixir: "~> 1.2",
-     description: description,
-     deps: deps,
-     package: package]
+     version: "0.4.0",
+     elixir: "~> 1.4",
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
+     deps: deps(),
+     description: description(),
+     package: package()]
   end
 
   def application do
-    []
+    # Specify extra applications you'll use from Erlang/Elixir
+    [extra_applications: [:logger]]
+  end
+
+  defp deps do
+    [{:dogma, "~> 0.1.13", only: :dev},
+     {:earmark, "~> 1.0", only: :dev},
+     {:ex_doc, "~> 0.14.5", only: :dev}]
   end
 
   defp description do
     "An experimental Entity-Component System (ECS) game engine."
-  end
-
-  defp deps do
-    [{:dogma, "~> 0.1", only: :dev},
-     {:earmark, "~> 0.1", only: :dev},
-     {:ex_doc, "~> 0.11", only: :dev}]
   end
 
   defp package do
