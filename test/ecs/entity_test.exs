@@ -4,72 +4,51 @@ defmodule ECS.EntityTest do
 
   test "attach/2 works as expected" do
     entity = ECS.Entity.new([])
-    Agent.get(entity, &refute(Map.has_key?(&1, Test)))
+    refute Map.has_key?(entity, :test)
 
-    ECS.Entity.attach(entity, Test.new(:ok))
-    Agent.get(entity, &assert(Map.has_key?(&1, Test)))
+    entity = ECS.Entity.attach(entity, Test.new(:ok))
+    assert Map.has_key?(entity, :test)
   end
 
   test "detach/2 works as expected" do
     entity = ECS.Entity.new([Test.new(:ok)])
-    Agent.get(entity, &assert(Map.has_key?(&1, Test)))
+    assert Map.has_key?(entity, :test)
 
-    ECS.Entity.detach(entity, Test)
-    Agent.get(entity, &refute(Map.has_key?(&1, Test)))
+    entity = ECS.Entity.detach(entity, :test)
+    refute Map.has_key?(entity, :test)
   end
 
-  test "get/2 component value lookup is supported" do
-    entity = ECS.Entity.new([Test.new(:ok)])
-    assert ECS.Entity.get(entity, Test).value == :ok
-  end
-
-  test "has?/2 returns `true` when component is attached" do
-    entity = ECS.Entity.new([Test.new(:ok)])
-    assert ECS.Entity.has?(entity, Test)
-  end
-
-  test "has?/2 returns `false` when component is not attached" do
+  test "new/1 returns a map" do
     entity = ECS.Entity.new([])
-    refute ECS.Entity.has?(entity, Test)
+    assert is_map(entity)
   end
 
-  test "has?/2 returns `true` when multiple components are attached" do
+  test "new/1 creates entity map with expected components" do
     entity = ECS.Entity.new([Test.new(:ok)])
-    assert ECS.Entity.has?(entity, [Test])
-  end
-
-  test "has?/2 returns `false` when any listed components are not attached" do
-    entity = ECS.Entity.new([Test.new(:ok)])
-    refute ECS.Entity.has?(entity, [Test, Component.Empty])
-  end
-
-  test "new/1 returns an agent pid" do
-    entity = ECS.Entity.new([])
-    assert is_pid(entity)
-  end
-
-  test "new/1 creates entity with expected components" do
-    [Test.new(:ok)]
-    |> ECS.Entity.new
-    |> Agent.get(&assert(Map.has_key?(&1, Test)))
+    assert Map.has_key?(entity, :test)
   end
 
   test "set/3 changes component value" do
     entity = ECS.Entity.new([Test.new(:initial)])
-    Agent.get(entity, &assert(Map.get(&1, Test).value == :initial))
+    assert entity.test.value == :initial
 
-    ECS.Entity.set(entity, Test, %{value: :updated})
-    Agent.get(entity, &assert(Map.get(&1, Test).value == :updated))
+    entity = ECS.Entity.set(entity, :test, %{value: :updated})
+    assert entity.test.value == :updated
   end
 
   test "update/3 changes component value" do
     entity = ECS.Entity.new([Test.new(:initial)])
-    Agent.get(entity, &assert(Map.get(&1, Test).value == :initial))
+    assert entity.test.value == :initial
 
-    ECS.Entity.update(entity, Test, fn(cmp) ->
+    entity = ECS.Entity.update(entity, :test, fn(cmp) ->
       assert cmp.value == :initial
       %Test{value: :updated}
     end)
-    Agent.get(entity, &assert(Map.get(&1, Test).value == :updated))
+    assert entity.test.value == :updated
+  end
+
+  test "components are retrievable by key" do
+    entity = ECS.Entity.new([Test.new(:initial)])
+    assert entity.test.value === :initial
   end
 end

@@ -4,9 +4,9 @@ defmodule ECS.SystemTest do
   test "run/2 checks services' required types and calls `perform/1`" do
     defmodule CheckColor do
       @behaviour ECS.System
-      def component_types, do: [:test]
+      def component_keys, do: [:test]
       def perform(entity) do
-        assert ECS.Entity.get(entity, :test) == :blue
+        assert entity.test.value == :blue
         entity
       end
     end

@@ -3,14 +3,14 @@
 [![build](https://img.shields.io/travis/joshforisha/ecs.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/joshforisha/ecs)
 [![Hex.pm](https://img.shields.io/hexpm/v/ecs.svg?maxAge=2592000?style=flat-square)](https://hex.pm/packages/ecs)
 
-Elixir Entity-Component System game engine
+Elixir Entity-Component System modules
 
 ## Installation
 
 Add ecs to your list of dependencies in `mix.exs`:
 
     def deps do
-      [{:ecs, "~> 0.3.0"}]
+      [{:ecs, "~> 0.5.0"}]
     end
 
 ## Example
@@ -18,7 +18,7 @@ Add ecs to your list of dependencies in `mix.exs`:
 ```elixir
 # Define a simple component for containing a "name" value.
 defmodule Component.Name do
-  defstruct value: nil
+  defstruct [:value]
 
   def new(name), do: %__MODULE__{value: name}
 end
@@ -37,14 +37,10 @@ defmodule System.DisplayName do
   @behaviour ECS.System
   alias Component.Name
 
-  def component_types, do: [Name]
+  def component_keys, do: [Name]
 
   def perform(entity) do
-    entity
-    |> ECS.Entity.get(Name)
-    |> Map.get(:value)
-    |> IO.puts
-
+    IO.puts entity.name.value
     entity
   end
 end

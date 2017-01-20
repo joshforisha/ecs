@@ -2,10 +2,8 @@ defmodule ECS.System do
   @moduledoc """
   Functions to setup and control systems.
 
-  A system iterates over entities with certain components, defined in
-  `component_types/0`, and calls `perform/1` on each entity. `perform/1` should
-  return the entity_pid when the entity should continue to exist in the
-  shared collection.
+  A system iterates over entities with certain components, defined in `component_keys/0`, and calls `perform/1` on each
+  entity. `perform/1` should return the entity_pid when the entity should continue to exist in the shared collection.
 
   ## Examples
 
@@ -14,11 +12,11 @@ defmodule ECS.System do
         @behaviour ECS.System
 
         # Accepts entities with a name component.
-        def component_types, do: [Component.Name]
+        def component_keys, do: [:name]
 
         def perform(entity) do
           # Displays the entity's name.
-          IO.puts ECS.Entity.get(entity, Component.Name)
+          IO.puts entity.name
 
           # Return the entity so that it is passed onto other systems.
           entity
@@ -29,19 +27,17 @@ defmodule ECS.System do
       updated_entities = ECS.System.run([DisplayNames], entities)
   """
 
-  @callback component_types() :: [atom]
+  @callback component_keys() :: [atom]
   @callback perform(pid) :: pid
 
   @doc "Run `systems` over `entities`."
   def run([], entities), do: entities
   def run([system | systems], entities) do
-    systems
-    |> run(Enum.map(entities, &iterate(system, &1)))
+    run(systems, Enum.map(entities, &iterate(system, &1)))
   end
 
   defp iterate(system, entity) do
-    cmp_types = system.component_types
-    if ECS.Entity.has?(entity, cmp_types) do
+    if Enum.reduce(system.component_keys, fn(key, okay) -> okay && Map.has_key?(entity, key) end) do
       system.perform(entity)
     else
       entity
