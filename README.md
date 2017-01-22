@@ -21,6 +21,10 @@ defmodule Component.Name do
   defstruct [:value]
 
   def new(name), do: %__MODULE__{value: name}
+  
+  defimpl String.Chars do
+    def to_string(%{value: name}), do: name
+  end
 end
 
 # Define a player entity that will contain components.
@@ -35,12 +39,11 @@ end
 # Define a system that prints out names of entities that have name components.
 defmodule System.DisplayName do
   @behaviour ECS.System
-  alias Component.Name
 
-  def component_keys, do: [Name]
+  def component_keys, do: [:name]
 
   def perform(entity) do
-    IO.puts entity.name.value
+    IO.puts entity.name
     entity
   end
 end
