@@ -38,7 +38,7 @@ end
 
 # Define a system that prints out names of entities that have name components.
 defmodule System.DisplayName do
-  @behaviour ECS.System
+  use ECS.System
 
   def component_keys, do: [:name]
 
