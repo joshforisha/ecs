@@ -94,13 +94,6 @@ defmodule ECS.System do
 
   """
 
-  # @callback component_keys() :: [atom]
-  # @callback other_component_keys() :: [atom]
-  # @callback initial_state() :: any
-  # @callback pre_perform([pid], any) :: any
-  # @callback perform(pid, any, [pid] | nil) :: {pid, any} | pid
-  # @callback post_perform([pid], any) :: any
-
   @doc "Defines the component keys to search for that the system processes."
   @callback component_keys() :: [atom]
 
@@ -111,14 +104,20 @@ defmodule ECS.System do
   @callback initial_state() :: state :: any
 
   @doc "Called before any `perform` calls are made in order to transform the entities list or the state."
-  @callback pre_perform(entities :: [pid], state :: any) :: {entities :: [pid], state :: any}
+  @callback pre_perform(entities :: [pid], state :: any, opts :: Keyword.t()) ::
+              {entities :: [pid], state :: any}
 
   @doc "Modifies the given `entity` and, optionally, the system's current run's `state`."
-  @callback perform(entity :: pid, state :: term, other_entities :: [pid] | nil) ::
-              {entity :: pid, state :: any} | entity :: pid
+  @callback perform(
+              entity :: pid,
+              state :: term | nil,
+              other_entities :: [pid] | [],
+              opts :: Keyword.t()
+            ) :: {entity :: pid, state :: any} | entity :: pid
 
   @doc "Called after all `perform` calls are made in order to transform the entities list or the state."
-  @callback post_perform(entities :: [pid], state :: any) :: {entities :: [pid], state :: any}
+  @callback post_perform(entities :: [pid], state :: any, opts :: Keyword.t()) ::
+              {entities :: [pid], state :: any}
 
   defmacro __using__(_opts) do
     quote do
@@ -130,40 +129,58 @@ defmodule ECS.System do
       def other_component_keys(), do: []
       defoverridable other_component_keys: 0
 
-      def pre_perform(entities, state), do: {entities, state}
-      defoverridable pre_perform: 2
+      def pre_perform(entities, state, _opts \\ nil), do: {entities, state}
+      defoverridable pre_perform: 3
 
-      def post_perform(entities, state), do: {entities, state}
-      defoverridable post_perform: 2
+      def post_perform(entities, state, _opts \\ nil), do: {entities, state}
+      defoverridable post_perform: 3
 
-      def perform(entity), do: entity
+      def perform(entity) do
+        entity
+      end
+
       defoverridable perform: 1
 
-      @doc "Modifies the given entity when no state is provided."
-      def perform(entity, nil), do: perform(entity)
+      def perform(entity, nil) do
+        perform(entity)
+      end
+
+      def perform(entity, state) do
+        {entity, state}
+      end
+
       defoverridable perform: 2
 
-      def perform(entity, state, _other_entities), do: perform(entity, state)
+      def perform(entity, state, other_entities) do
+        perform(entity, state)
+      end
+
       defoverridable perform: 3
+
+      def perform(entity, state, other_entities, opts) do
+        perform(entity, state, other_entities)
+      end
+
+      defoverridable perform: 4
     end
   end
 
   @doc "Run `systems` over `entities`."
-  def run(systems, entities) do
+  def run(systems, entities, opts \\ []) do
     {entities, states} =
       Enum.reduce(systems, {entities, []}, fn system, {entities, states} ->
-        {entities, state} = do_run(system, entities)
+        {entities, state} = do_run(system, entities, opts)
         {entities, [state | states]}
       end)
 
     {entities, Enum.reverse(states)}
   end
 
-  defp do_run([], entities), do: {entities, nil}
+  defp do_run([], entities, _opts), do: {entities, nil}
 
-  defp do_run(system, entities) do
+  defp do_run(system, entities, opts) do
     state = system.initial_state()
-    {entities, state} = system.pre_perform(entities, state)
+    {entities, state} = system.pre_perform(entities, state, opts)
 
     other_entities =
       case system.other_component_keys do
@@ -181,17 +198,17 @@ defmodule ECS.System do
 
     {entities, state} =
       Enum.map_reduce(entities, state, fn entity, state ->
-        iterate(system, entity, state, other_entities)
+        iterate(system, entity, state, other_entities, opts)
       end)
 
-    system.post_perform(entities, state)
+    system.post_perform(entities, state, opts)
   end
 
-  defp iterate(system, entity, state, other_entities) do
+  defp iterate(system, entity, state, other_entities, opts) do
     if Enum.reduce(system.component_keys, true, fn key, okay ->
          okay && Map.has_key?(entity, key)
        end) do
-      case system.perform(entity, state, other_entities) do
+      case system.perform(entity, state, other_entities, opts) do
         {entity, state} -> {entity, state}
         entity -> {entity, state}
       end

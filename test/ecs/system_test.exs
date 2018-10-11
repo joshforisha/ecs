@@ -18,7 +18,7 @@ defmodule ECS.SystemTest do
     ])
   end
 
-  test "" do
+  test "test stateful and interactive systems" do
     defmodule Counter do
       use ECS.System
 
