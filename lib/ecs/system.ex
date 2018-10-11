@@ -173,8 +173,8 @@ defmodule ECS.System do
         keys ->
           Enum.filter(
             entities,
-            &Enum.reduce(keys, false, fn key, okay ->
-              okay || Map.has_key?(&1, key)
+            &Enum.reduce(keys, true, fn key, okay ->
+              okay && Map.has_key?(&1, key)
             end)
           )
       end
@@ -188,8 +188,8 @@ defmodule ECS.System do
   end
 
   defp iterate(system, entity, state, other_entities) do
-    if Enum.reduce(system.component_keys, false, fn key, okay ->
-         okay || Map.has_key?(entity, key)
+    if Enum.reduce(system.component_keys, true, fn key, okay ->
+         okay && Map.has_key?(entity, key)
        end) do
       case system.perform(entity, state, other_entities) do
         {entity, state} -> {entity, state}
