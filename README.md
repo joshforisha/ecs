@@ -21,7 +21,7 @@ defmodule Component.Name do
   defstruct [:value]
 
   def new(name), do: %__MODULE__{value: name}
-  
+
   defimpl String.Chars do
     def to_string(%{value: name}), do: name
   end
