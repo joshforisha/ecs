@@ -21,7 +21,7 @@ defmodule Component.Name do
   defstruct [:value]
 
   def new(name), do: %__MODULE__{value: name}
-  
+
   defimpl String.Chars do
     def to_string(%{value: name}), do: name
   end
@@ -38,7 +38,7 @@ end
 
 # Define a system that prints out names of entities that have name components.
 defmodule System.DisplayName do
-  @behaviour ECS.System
+  use ECS.System
 
   def component_keys, do: [:name]
 
